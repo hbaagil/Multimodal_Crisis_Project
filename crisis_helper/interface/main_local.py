@@ -7,14 +7,15 @@ from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 from crisis_helper.ml_logic.data import clean_data
-from crisis_helper.ml_logic.preprocess import preprocessing, tfidf_vectorizer
+from crisis_helper.ml_logic.preprocess import text_cleaning
 from crisis_helper.ml_logic.model_binary import train_logistic_regression, predict_binary_logistic_regression
 from crisis_helper.ml_logic.model_multiclass import train_logreg_multiclass, predict_logreg_multiclass
 from crisis_helper.params import *
 from sklearn.metrics import accuracy_score
 from crisis_helper.ml_logic.registry import *
 
-def preprocess_and_train() -> None:
+
+def preprocess_train_validate() -> None:
     """
     - Query the raw dataset from Kaggle API
     - Cache query result as a local CSV if it doesn't exist locally
@@ -97,8 +98,8 @@ def preprocess_and_train() -> None:
     #df_test['encoded_label'] = label_encoder.transform(df_test['label_text'])
 
     # Preprocessing the column tweet_text using preprocess.py
-    df_train['clean_texts'] = df_train.tweet_text.apply(preprocessing)
-    df_val['clean_texts'] = df_val.tweet_text.apply(preprocessing)
+    df_train['clean_texts'] = df_train.tweet_text.apply(text_cleaning)
+    df_val['clean_texts'] = df_val.tweet_text.apply(text_cleaning)
     #df_test['clean_texts'] = df_test.tweet_text.apply(preprocessing)
 
 
@@ -116,9 +117,9 @@ def preprocess_and_train() -> None:
     # Instantiate a TF-IDF vectorizer
     vectorizer = TfidfVectorizer()
 
-    # Fit and transform training data
-    X_train = vectorizer.fit_transform(X_train_unvec)
+    vectorizer.fit(X_train)
 
+    X_train = vectorizer.transform(X_val_unvec)
     # Transform the validation and test data
     X_val = vectorizer.transform(X_val_unvec)
     #X_test = vectorizer.transform(X_test_unvec)
@@ -134,7 +135,7 @@ def preprocess_and_train() -> None:
 
     #y_pred_test_logreg = model.predict(X_test)
 
-    # Evaluate the LogReg classifier on validation and test dataset
+    # Evaluate the LogReg classifier on validation dataset
     accuracy_val_logreg = accuracy_score(y_val, y_pred_val_logreg)
 
     #accuracy_test_logreg = accuracy_score(y_test, y_pred_test_logreg)
@@ -166,6 +167,10 @@ def pred(X_pred: pd.DataFrame = None) -> np.ndarray:
         X_pred = df_test["tweet_text"].iloc[random.randint(0, len(df_test) - 1)]
 
     model = load_model()
+    X_pred['clean_texts'] = X_pred.tweet_text.apply(text_cleaning)
+
+    # Instantiate a TF-IDF vectorizer
+    vectorizer = TfidfVectorizer()
     X_processed = preprocess_features(X_pred)
     y_pred = model.predict(X_processed)
 

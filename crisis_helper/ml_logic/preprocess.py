@@ -7,46 +7,46 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-def preprocessing (X: pd.DataFrame) -> np.ndarray:
-    def sanitizing(sentence):
-        # Remove retweets like "RT @username:"
-        sentence = re.sub(r'RT @\w+:', '', sentence)
 
-        # Removing whitespaces
-        sentence = sentence.strip()
+def text_cleaning(X: pd.DataFrame):
+    # Remove retweets like "RT @username:"
+    sentence = re.sub(r'RT @\w+:', '', sentence)
 
-        # Lowercasing
-        sentence = sentence.lower()
+    # Removing whitespaces
+    sentence = sentence.strip()
 
-        # Removing numbers and unwanted characters
-        sentence = re.sub(r'[^a-zA-Z\s]', '', sentence)
+    # Lowercasing
+    sentence = sentence.lower()
 
-        # Replace URLs with <URL> placeholder
-        sentence = re.sub(r'http\S+|www\S+|https\S+', '', sentence)
+    # Removing numbers and unwanted characters
+    sentence = re.sub(r'[^a-zA-Z\s]', '', sentence)
 
-        # Tokenizing
-        tokenized = word_tokenize(sentence)
+    # Replace URLs with <URL> placeholder
+    sentence = re.sub(r'http\S+|www\S+|https\S+', '', sentence)
 
-        # Stopword Removal
-        stop_words = set(stopwords.words('english'))
-        filtered_words = [word for word in tokenized if word not in stop_words]
+    # Tokenizing
+    tokenized = word_tokenize(sentence)
 
-        # Lemmatizing
-        lemmatizer = WordNetLemmatizer()
-        lemmatized = [lemmatizer.lemmatize(word) for word in filtered_words]
-        cleaned_sentence = " ".join(lemmatized)
+    # Stopword Removal
+    stop_words = set(stopwords.words('english'))
+    filtered_words = [word for word in tokenized if word not in stop_words]
 
-        print("✅ feature text preprocessed")
+    # Lemmatizing
+    lemmatizer = WordNetLemmatizer()
+    lemmatized = [lemmatizer.lemmatize(word) for word in filtered_words]
+    cleaned_sentence = " ".join(lemmatized)
 
-        return cleaned_sentence
+    print("✅ feature text preprocessed")
+
+    return cleaned_sentence
 
 
-def tfidf_vectorizer(df: pd.DataFrame) -> pd.DataFrame:
+def tfidf_vectorizer():
     """
     Instantiate TF-IDF vectorizer.
     """
 
-    # Create a LabelEncoder instance
+    # Instantiate a TF-IDF vectorizer
     vectorizer = TfidfVectorizer()
 
     print("✅ feature text with TF-IDF vectorized")
