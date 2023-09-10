@@ -6,8 +6,8 @@ with open("requirements.txt") as f:
 requirements = [x.strip() for x in content if "git+" not in x]
 
 setup(name='crisis_helper',
-      version="0.0.1",
-      description="crisis_helper (api_pred)",
+      version="0.0.2",
+      description="crisis_helper (binary_api_pred)",
       license="MIT",
       author="Le Wagon",
       author_email="contact@lewagon.org",
