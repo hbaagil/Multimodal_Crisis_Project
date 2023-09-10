@@ -1,11 +1,11 @@
-import string
+#import string
 import re
 import pandas as pd
 import numpy as np
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
-from sklearn.feature_extraction.text import TfidfVectorizer
+#from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def text_cleaning(X: pd.DataFrame):
