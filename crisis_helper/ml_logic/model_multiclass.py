@@ -1,3 +1,4 @@
+'''
 from sklearn.linear_model import LogisticRegression
 from sklearn.utils import shuffle
 
@@ -20,3 +21,4 @@ def predict_logreg_multiclass(logreg_classifier, X):
     print(f"✅ Model predict on logistic regression multiclass classification")
 
     return logreg_classifier.predict(X)
+'''

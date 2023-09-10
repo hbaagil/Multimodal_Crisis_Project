@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 from crisis_helper.ml_logic.data import clean_data
 from crisis_helper.ml_logic.preprocess import text_cleaning
 from crisis_helper.ml_logic.model_binary import train_logistic_regression, predict_binary_logistic_regression
-from crisis_helper.ml_logic.model_multiclass import train_logreg_multiclass, predict_logreg_multiclass
+#from crisis_helper.ml_logic.model_multiclass import train_logreg_multiclass, predict_logreg_multiclass
 from crisis_helper.params import *
 from sklearn.metrics import accuracy_score
 from crisis_helper.ml_logic.registry import *

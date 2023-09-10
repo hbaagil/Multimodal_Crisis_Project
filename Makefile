@@ -21,8 +21,8 @@ run_all: preprocess_train_validate run_pred
 # run_workflow:
 # 	PREFECT__LOGGING__LEVEL=${PREFECT_LOG_LEVEL} python -m crisis_helper.interface.workflow
 
-# run_api:
-# 	uvicorn crisis_helper.api.fast:app --reload
+run_api:
+	@uvicorn crisis_helper.api.fast:app --reload --port 8008
 
 ##################### TESTS #####################
 
