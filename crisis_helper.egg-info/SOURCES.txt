@@ -1,5 +1,3 @@
-LICENSE
-README.md
 setup.py
 crisis_helper.egg-info/PKG-INFO
 crisis_helper.egg-info/SOURCES.txt

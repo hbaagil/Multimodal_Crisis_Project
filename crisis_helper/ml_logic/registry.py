@@ -5,12 +5,13 @@ import pickle
 import sklearn
 
 from colorama import Fore, Style
-from tensorflow import keras
+#from tensorflow import keras
 from sklearn.linear_model import LogisticRegression
 #from google.cloud import storage
-
 from crisis_helper.params import *
-def save_results(params: dict, metrics: dict) -> None:
+
+
+def save_results(params: dict=None, metrics: dict=None) -> None:
     """
     Persist params & metrics locally on the hard drive at
     "{LOCAL_REGISTRY_PATH}/params/{current_timestamp}.pickle"
@@ -35,24 +36,51 @@ def save_results(params: dict, metrics: dict) -> None:
 
 
 def save_model(model: sklearn.linear_model._logistic.LogisticRegression = None) -> None:
+
     """
-    Persist trained model locally on the hard drive at f"{LOCAL_REGISTRY_PATH}/models/{timestamp}.h5"
-    - if MODEL_TARGET='gcs', also persist it in your bucket on GCS at "models/{timestamp}.h5" --> unit 02 only
-    - if MODEL_TARGET='mlflow', also persist it on MLflow instead of GCS (for unit 0703 only) --> unit 03 only
+    Saves model locally in a pickle file
     """
 
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
     # Save model locally
-    model_path = os.path.join(LOCAL_REGISTRY_PATH, "models", f"{timestamp}.h5")
-    model.save(model_path)
+    #model_path = os.path.join(LOCAL_REGISTRY_PATH, "models", f"{timestamp}.h5")
+    #model.save(model_path)
 
-    print("✅ Model saved locally")
+    # Save model locally
+    if model is not None:
+        models_path = os.path.join(LOCAL_REGISTRY_PATH, "models", "model", timestamp + ".pickle")
+        with open(models_path, 'wb') as file:
+            pickle.dump(model, file)
 
-    return None
+        print("✅ Model saved locally")
+        return None
 
 
-def load_model(stage="Production") -> sklearn.linear_model._logistic.LogisticRegression:
+def save_vectorizer(vectorizer: sklearn.feature_extraction.text.TfidfVectorizer = None) -> None:
+
+    """
+    Saves vectorizer locally in a pickle file
+    """
+
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+
+    # Save model locally
+    #model_path = os.path.join(LOCAL_REGISTRY_PATH, "models", f"{timestamp}.h5")
+    #model.save(model_path)
+
+    # Save vectorizer locally
+    if vectorizer is not None:
+        models_path = os.path.join(LOCAL_REGISTRY_PATH, "models", "vectorizer", timestamp + ".pickle")
+        with open(models_path, 'wb') as file:
+            pickle.dump(vectorizer, file)
+
+        print("✅ Vectorizer saved locally")
+        return None
+
+
+def load_model() -> sklearn.linear_model._logistic.LogisticRegression:
+    #load_model(stage="Production") -> sklearn.linear_model._logistic.LogisticRegression:
     """
     Return a saved model:
     - locally (latest one in alphabetical order)
@@ -63,22 +91,55 @@ def load_model(stage="Production") -> sklearn.linear_model._logistic.LogisticReg
 
     """
 
-    if MODEL_TARGET == "local":
-        print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
+    #if MODEL_TARGET == "local":
+    print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
 
-        # Get the latest model version name by the timestamp on disk
-        local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models")
-        local_model_paths = glob.glob(f"{local_model_directory}/*")
+    # Get the latest model version name by the timestamp on disk
+    local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models", "model")
+    local_model_files = glob.glob(f"{local_model_directory}/*.pickle")
 
-        if not local_model_paths:
-            return None
+    if not local_model_files:
+        return None
 
-        most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
+    most_recent_model_file_on_disk = sorted(local_model_files)[-1]
 
-        print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
+    # Open saved model
+    with open(most_recent_model_file_on_disk ,'rb') as f:
+        latest_model = pickle.load(f)
 
-        latest_model = keras.models.load_model(most_recent_model_path_on_disk)
+    print("✅ Model loaded from local disk")
 
-        print("✅ Model loaded from local disk")
+    return latest_model
 
-        return latest_model
+
+def load_vectorizer() -> sklearn.feature_extraction.text.TfidfVectorizer:
+    #load_vectorizer(stage="Production") -> sklearn.feature_extraction.text.TfidfVectorizer:
+    """
+    Return a saved model:
+    - locally (latest one in alphabetical order)
+    - or from GCS (most recent one) if MODEL_TARGET=='gcs'  --> for unit 02 only
+    - or from MLFLOW (by "stage") if MODEL_TARGET=='mlflow' --> for unit 03 only
+
+    Return None (but do not Raise) if no model is found
+
+    """
+
+    #if MODEL_TARGET == "local":
+    print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
+
+    # Get the latest model version name by the timestamp on disk
+    local_vectorizer_directory = os.path.join(LOCAL_REGISTRY_PATH, "models", "vectorizer")
+    local_vectorizer_files = glob.glob(f"{local_vectorizer_directory}/*.pickle")
+
+    if not local_vectorizer_files:
+        return None
+
+    most_recent_vectorizer_file_on_disk = sorted(local_vectorizer_files)[-1]
+
+   # Open saved vectorizer
+    with open(most_recent_vectorizer_file_on_disk,'rb') as f:
+        latest_vectorizer = pickle.load(f)
+
+    print("✅ Vectorizer loaded from local disk")
+
+    return latest_vectorizer

@@ -10,15 +10,12 @@ def train_logistic_regression(X_train, y_train):
     logreg_classifier = LogisticRegression(max_iter=1000)
     logreg_classifier.fit(X_train, y_train)
 
-    print(f"✅ Model train on logistic regression binary classification")
+    print(f"✅ Model trained on logistic regression binary classification")
 
     return logreg_classifier
 
 def predict_binary_logistic_regression(logreg_classifier, X):
     # Predict binary labels (0 or 1) using the trained LogReg classifier
-
-
-
     # Make predictions using the model
     predictions = logreg_classifier.predict(X)
 

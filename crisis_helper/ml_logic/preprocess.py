@@ -10,7 +10,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 def text_cleaning(X: pd.DataFrame):
     # Remove retweets like "RT @username:"
-    sentence = re.sub(r'RT @\w+:', '', sentence)
+    sentence = re.sub(r'RT @\w+:', '', X)
 
     # Removing whitespaces
     sentence = sentence.strip()
@@ -36,11 +36,9 @@ def text_cleaning(X: pd.DataFrame):
     lemmatized = [lemmatizer.lemmatize(word) for word in filtered_words]
     cleaned_sentence = " ".join(lemmatized)
 
-    print("✅ feature text preprocessed")
-
     return cleaned_sentence
 
-
+'''
 def tfidf_vectorizer():
     """
     Instantiate TF-IDF vectorizer.
@@ -51,3 +49,4 @@ def tfidf_vectorizer():
 
     print("✅ feature text with TF-IDF vectorized")
     return vectorizer
+'''
