@@ -4,102 +4,104 @@ reinstall_package:
 	@pip uninstall -y crisis_helper || :
 	@pip install -e .
 
-run_preprocess:
-	python -c 'from crisis_helper.interface.main import preprocess; preprocess()'
+preprocess_train_validate:
+	python -c 'from crisis_helper.interface.main_local import preprocess_train_validate; preprocess_train_validate()'
 
-run_train:
-	python -c 'from crisis_helper.interface.main import train; train()'
+#run_train:
+#	python -c 'from crisis_helper.interface.main import train; train()'
 
 run_pred:
-	python -c 'from crisis_helper.interface.main import pred; pred()'
+	python -c 'from crisis_helper.interface.main_local import pred; pred()'
 
-run_evaluate:
-	python -c 'from crisis_helper.interface.main import evaluate; evaluate()'
+#run_evaluate:
+#	python -c 'from crisis_helper.interface.main import evaluate; evaluate()'
 
-run_all: run_preprocess run_train run_pred run_evaluate
+run_all: preprocess_train_validate run_pred
 
-run_workflow:
-	PREFECT__LOGGING__LEVEL=${PREFECT_LOG_LEVEL} python -m crisis_helper.interface.workflow
+# run_workflow:
+# 	PREFECT__LOGGING__LEVEL=${PREFECT_LOG_LEVEL} python -m crisis_helper.interface.workflow
 
 run_api:
-	uvicorn crisis_helper.api.fast:app --reload
+	@uvicorn crisis_helper.api.fast:app --reload --port 8008
 
 ##################### TESTS #####################
-test_gcp_setup:
-	@pytest \
-	tests/all/test_gcp_setup.py::TestGcpSetup::test_setup_key_env \
-	tests/all/test_gcp_setup.py::TestGcpSetup::test_setup_key_path \
-	tests/all/test_gcp_setup.py::TestGcpSetup::test_code_get_project \
-	tests/all/test_gcp_setup.py::TestGcpSetup::test_code_get_wagon_project
-
-default:
-	cat tests/api/test_output.txt
-
-test_kitt:
-	@echo "\n 🧪 computing and saving your progress at 'tests/api/test_output.txt'..."
-	@pytest tests/api -c "./tests/pytest_kitt.ini" 2>&1 > tests/api/test_output.txt || true
-	@echo "\n 🙏 Please: \n git add tests \n git commit -m 'checkpoint' \n ggpush"
-
-test_api_root:
-	pytest \
-	tests/api/test_endpoints.py::test_root_is_up --asyncio-mode=strict -W "ignore" \
-	tests/api/test_endpoints.py::test_root_returns_greeting --asyncio-mode=strict -W "ignore"
-
-test_api_predict:
-	pytest \
-	tests/api/test_endpoints.py::test_predict_is_up --asyncio-mode=strict -W "ignore" \
-	tests/api/test_endpoints.py::test_predict_is_dict --asyncio-mode=strict -W "ignore" \
-	tests/api/test_endpoints.py::test_predict_has_key --asyncio-mode=strict -W "ignore" \
-	tests/api/test_endpoints.py::test_predict_val_is_float --asyncio-mode=strict -W "ignore"
-
-test_api_on_prod:
-	pytest \
-	tests/api/test_cloud_endpoints.py --asyncio-mode=strict -W "ignore"
 
 
 ################### DATA SOURCES ACTIONS ################
 
-# Data sources: targets for monthly data imports
-ML_DIR=~/.lewagon/mlops
-HTTPS_DIR=https://storage.googleapis.com/datascience-mlops/taxi-fare-ny/
-GS_DIR=gs://datascience-mlops/taxi-fare-ny
-
-show_sources_all:
-	-ls -laR ~/.lewagon/mlops/data
-	-bq ls ${BQ_DATASET}
-	-bq show ${BQ_DATASET}.processed_1k
-	-bq show ${BQ_DATASET}.processed_200k
-	-bq show ${BQ_DATASET}.processed_all
-	-gsutil ls gs://${BUCKET_NAME}
+ML_DIR=~/.crisis_helper/mlops/training_outputs
 
 reset_local_files:
 	rm -rf ${ML_DIR}
-	mkdir -p ~/.lewagon/mlops/data/
-	mkdir ~/.lewagon/mlops/data/raw
-	mkdir ~/.lewagon/mlops/data/processed
-	mkdir ~/.lewagon/mlops/training_outputs
-	mkdir ~/.lewagon/mlops/training_outputs/metrics
-	mkdir ~/.lewagon/mlops/training_outputs/models
-	mkdir ~/.lewagon/mlops/training_outputs/params
+	mkdir ~/.crisis_helper/mlops/training_outputs
+	mkdir ~/.crisis_helper/mlops/training_outputs/metrics
+	mkdir ~/.crisis_helper/mlops/training_outputs/models
+	mkdir ~/.crisis_helper/mlops/training_outputs/models/vectorizer
+	mkdir ~/.crisis_helper/mlops/training_outputs/models/model
+	mkdir ~/.crisis_helper/mlops/training_outputs/params
 
-reset_local_files_with_csv_solutions: reset_local_files
-	-curl ${HTTPS_DIR}solutions/data_query_fixture_2009-01-01_2015-01-01_1k.csv > ${ML_DIR}/data/raw/query_2009-01-01_2015-01-01_1k.csv
-	-curl ${HTTPS_DIR}solutions/data_query_fixture_2009-01-01_2015-01-01_200k.csv > ${ML_DIR}/data/raw/query_2009-01-01_2015-01-01_200k.csv
-	-curl ${HTTPS_DIR}solutions/data_query_fixture_2009-01-01_2015-01-01_all.csv > ${ML_DIR}/data/raw/query_2009-01-01_2015-01-01_all.csv
-	-curl ${HTTPS_DIR}solutions/data_processed_fixture_2009-01-01_2015-01-01_1k.csv > ${ML_DIR}/data/processed/processed_2009-01-01_2015-01-01_1k.csv
-	-curl ${HTTPS_DIR}solutions/data_processed_fixture_2009-01-01_2015-01-01_200k.csv > ${ML_DIR}/data/processed/processed_2009-01-01_2015-01-01_200k.csv
-	-curl ${HTTPS_DIR}solutions/data_processed_fixture_2009-01-01_2015-01-01_all.csv > ${ML_DIR}/data/processed/processed_2009-01-01_2015-01-01_all.csv
+#======================#
+#         Docker       #
+#======================#
 
-reset_bq_files:
-	-bq rm --project_id ${GCP_PROJECT} ${BQ_DATASET}.processed_1k
-	-bq rm --project_id ${GCP_PROJECT} ${BQ_DATASET}.processed_200k
-	-bq rm --project_id ${GCP_PROJECT} ${BQ_DATASET}.processed_all
-	-bq mk --sync --project_id ${GCP_PROJECT} --location=${BQ_REGION} ${BQ_DATASET}.processed_1k
-	-bq mk --sync --project_id ${GCP_PROJECT} --location=${BQ_REGION} ${BQ_DATASET}.processed_200k
-	-bq mk --sync --project_id ${GCP_PROJECT} --location=${BQ_REGION} ${BQ_DATASET}.processed_all
+# Local images - using local computer's architecture
+# i.e. linux/amd64 for Windows / Linux / Apple with Intel chip
+#      linux/arm64 for Apple with Apple Silicon (M1 / M2 chip)
 
-reset_gcs_files:
-	-gsutil rm -r gs://${BUCKET_NAME}
-	-gsutil mb -p ${GCP_PROJECT} -l ${GCP_REGION} gs://${BUCKET_NAME}
+docker_build_local:
+	docker build --tag=$(GCR_IMAGE):local .
 
-reset_all_files: reset_local_files reset_bq_files reset_gcs_files
+docker_run_local:
+	docker run \
+    		-e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
+        --env-file .env \
+        $(GCR_IMAGE):local
+
+docker_run_local_interactively:
+	docker run -it \
+        -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
+        --env-file .env \
+        $(GCR_IMAGE):local \
+        bash
+
+# Cloud images - using architecture compatible with cloud, i.e. linux/amd64
+
+docker_build:
+	docker build \
+        --platform linux/amd64 \
+        -t $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod .
+
+# Alternative if previous doesn´t work. Needs additional setup.
+# Probably don´t need this. Used to build arm on linux amd64
+docker_build_alternative:
+	docker buildx build --load \
+        --platform linux/amd64 \
+        -t $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod .
+
+docker_run:
+	docker run \
+        --platform linux/amd64 \
+        -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
+        --env-file .env \
+        $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod
+
+docker_run_interactively:
+	docker run -it \
+        --platform linux/amd64 \
+        -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
+        --env-file .env \
+        $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod \
+        bash
+
+# Push and deploy to cloud
+
+docker_push:
+	docker push $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod
+
+docker_deploy:
+	gcloud run deploy \
+        --project $(PROJECT_ID) \
+        --image $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod \
+        --platform managed \
+        --region europe-west1 \
+        --env-vars-file .env.yaml
