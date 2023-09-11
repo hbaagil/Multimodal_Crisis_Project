@@ -20,13 +20,13 @@ app.add_middleware(
 
 #
 @app.get("/predict")
-def predict(twit: str):
+def predict(tweet: str):
     """
     Make a single course prediction.
     Assumes `tweet` is provided as a string by the user
     """
 
-    X_pred = pd.DataFrame([twit], columns=["tweet_text"])
+    X_pred = pd.DataFrame([tweet], columns=["tweet_text"])
 
     # Load vectorizer and model
     vectorizer = load_vectorizer()
