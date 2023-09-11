@@ -20,4 +20,7 @@ RUN python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); 
 
 COPY pickle_files pickle_files
 
+ENV NLTK_DATA /root/nltk_data/
+ADD . $NLTK_DATA
+
 CMD uvicorn crisis_helper.api.fast:app --host 0.0.0.0 --port $PORT
