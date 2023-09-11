@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 from crisis_helper.ml_logic.data import clean_data
 from crisis_helper.ml_logic.preprocess import text_cleaning
 from crisis_helper.ml_logic.model_binary import train_logistic_regression, predict_binary_logistic_regression
-from crisis_helper.ml_logic.model_multiclass import predict_multiclass_logistic_regression
+from crisis_helper.ml_logic.model_multiclass import train_logistic_regression_multi, predict_multiclass_logistic_regression
 from crisis_helper.params import *
 from sklearn.metrics import accuracy_score
 from crisis_helper.ml_logic.registry import *
@@ -92,6 +92,17 @@ def preprocess_train_validate() -> None:
     label_encoder_bin = label_encoder_bin.fit(df_train['label_text'])
     label_encoder_multi = label_encoder_multi.fit(df_train_multi['label_text'])
 
+    # Assuming you've already fitted label_encoder_multi as mentioned
+    # Get the mapping of labels to encoded values
+    label_mapping_multi = dict(zip(label_encoder_multi.classes_, label_encoder_multi.transform(label_encoder_multi.classes_)))
+
+    # Print the mapping
+    print("Label Mapping (Multiclass):")
+    for label, encoded_value in label_mapping_multi.items():
+        print(f"{label}: {encoded_value}")
+
+
+
     # Transform the train and test sets using the same label encoder
     df_train['encoded_label'] = label_encoder_bin.transform(df_train['label_text'])
     df_val['encoded_label'] = label_encoder_bin.transform(df_val['label_text'])
@@ -101,6 +112,7 @@ def preprocess_train_validate() -> None:
     # Preprocessing the column tweet_text using preprocess.py
     df_train['clean_texts'] = df_train.tweet_text.apply(text_cleaning)
     df_val['clean_texts'] = df_val.tweet_text.apply(text_cleaning)
+
 
     # Define X and y
     X_train_unvec = df_train['clean_texts']
@@ -124,7 +136,7 @@ def preprocess_train_validate() -> None:
     model = train_logistic_regression(X_train, y_train)
 
     # Train a model on the training set, using `model_multiclass.py` for multiclass classification
-    model_multi = train_logistic_regression(X_train, y_train_multi)
+    model_multi = train_logistic_regression_multi(X_train, y_train_multi)
 
     # Predict on the validation set
     y_pred_val_logreg = model.predict(X_val)
@@ -146,6 +158,15 @@ def preprocess_train_validate() -> None:
 
     print("✅ Model,vectorizer, encoder and results saved")
 
+    # Add debugging statements to examine intermediate results
+    print("Class distribution in training labels:", df_train_multi['encoded_label'].value_counts())
+    print("Class distribution in validation labels:", df_val_multi['encoded_label'].value_counts())
+    print("Predictions:", y_pred_val_logreg_multi)
+    print("True labels:", y_val_multi)
+    print("Model Parameters:", model_multi.get_params())
+    print("Shape of X_train:", X_train.shape)
+    print("Shape of X_val:", X_val.shape)
+
 
 def pred_bin(X_pred: pd.DataFrame = None) -> np.ndarray:
 
@@ -161,17 +182,18 @@ def pred_bin(X_pred: pd.DataFrame = None) -> np.ndarray:
     vectorizer = load_vectorizer()
     model = load_model()
 
-    # Clean twits
+    # Clean tweets
     X_pred['clean_texts'] = X_pred.tweet_text.apply(text_cleaning)
     X_pred_unvec = X_pred['clean_texts']
 
-    # Vectorize twits
+    # Vectorize tweets
     X_pred_vec = vectorizer.transform(X_pred_unvec)
 
     # Predict
     y_pred = predict_binary_logistic_regression(model, X_pred_vec)
 
     print(f"Tweet considered to be: {y_pred}")
+
     return y_pred
 
 def pred_multiclass(X_pred: pd.DataFrame = None) -> np.ndarray:
@@ -187,20 +209,21 @@ def pred_multiclass(X_pred: pd.DataFrame = None) -> np.ndarray:
     # Load vectorizer and model
     vectorizer = load_vectorizer()
     model = load_model()
-    encoder = load_encoder()
 
-    # Clean twits
+
+    # Clean tweets
     X_pred['clean_texts'] = X_pred.tweet_text.apply(text_cleaning)
     X_pred_unvec = X_pred['clean_texts']
 
-    # Vectorize twits
+    # Vectorize tweets
     X_pred_vec = vectorizer.transform(X_pred_unvec)
 
     # Predict
-    y_pred = predict_multiclass_logistic_regression(model, X_pred_vec, encoder)
+    y_pred = predict_multiclass_logistic_regression(model, X_pred_vec)
 
     print(f"Tweet considered to be: {y_pred}")
     return y_pred
+
 
 
 if __name__ == '__main__':
