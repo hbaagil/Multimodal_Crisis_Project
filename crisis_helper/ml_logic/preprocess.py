@@ -1,16 +1,16 @@
-import string
+#import string
 import re
 import pandas as pd
 import numpy as np
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
-from sklearn.feature_extraction.text import TfidfVectorizer
+#from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def text_cleaning(X: pd.DataFrame):
-    # Remove retweets like "RT @username:"
-    sentence = re.sub(r'RT @\w+:', '', sentence)
+    # Remove retweets like "RT @username:""
+    sentence = re.sub(r'RT @\w+:', '', X)
 
     # Removing whitespaces
     sentence = sentence.strip()
@@ -36,11 +36,9 @@ def text_cleaning(X: pd.DataFrame):
     lemmatized = [lemmatizer.lemmatize(word) for word in filtered_words]
     cleaned_sentence = " ".join(lemmatized)
 
-    print("✅ feature text preprocessed")
-
     return cleaned_sentence
 
-
+'''
 def tfidf_vectorizer():
     """
     Instantiate TF-IDF vectorizer.
@@ -51,3 +49,4 @@ def tfidf_vectorizer():
 
     print("✅ feature text with TF-IDF vectorized")
     return vectorizer
+'''
