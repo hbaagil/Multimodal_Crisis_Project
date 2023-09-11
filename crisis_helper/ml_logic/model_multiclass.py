@@ -1,24 +1,28 @@
-'''
 from sklearn.linear_model import LogisticRegression
 from sklearn.utils import shuffle
 
 
-def train_logreg_multiclass(X_train, y_train):
+def train_logistic_regression(X_train, y_train):
     # Shuffle the training data
     X_train, y_train = shuffle(X_train, y_train, random_state=42)
 
-    # Create and train the LogReg for multi-class classification
+    # Create and train the LogReg
     logreg_classifier = LogisticRegression(solver='lbfgs', multi_class='multinomial', max_iter=1000)
     logreg_classifier.fit(X_train, y_train)
 
-    print(f"✅ Model train on logistic regression multiclass classification")
+    print(f"✅ Model trained on logistic regression binary classification")
 
     return logreg_classifier
 
-def predict_logreg_multiclass(logreg_classifier, X):
-    # Predict binary labels (0 or 1) using the trained LogReg classifier
+def predict_multiclass_logistic_regression(logreg_classifier, X, label_encoder):
+    # Predict multiclass labels using the trained LogReg classifier
+    # Make predictions using the model
+    predictions = logreg_classifier.predict(X)
+
+    # # Map predictions to labels
+
+    labels = label_encoder.inverse_transform(predictions)
 
     print(f"✅ Model predict on logistic regression multiclass classification")
 
-    return logreg_classifier.predict(X)
-'''
+    return labels
