@@ -9,7 +9,7 @@ from nltk.corpus import stopwords
 
 
 def text_cleaning(X: pd.DataFrame):
-    # Remove retweets like "RT @username:"
+    # Remove retweets like "RT @username:""
     sentence = re.sub(r'RT @\w+:', '', X)
 
     # Removing whitespaces

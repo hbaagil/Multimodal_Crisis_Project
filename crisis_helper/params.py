@@ -11,7 +11,7 @@ BQ_REGION = "EU"
 MODEL_TARGET = "local"'''
 ##################  CONSTANTS  #####################
 LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), ".crisis_helper", "mlops", "data")
-LOCAL_REGISTRY_PATH =  os.path.join(os.path.expanduser('~'), ".crisis_helper", "mlops", "training_outputs")
+LOCAL_REGISTRY_PATH =  "pickle_files"
 
 COLUMN_NAMES_RAW = ['event_name', 'tweet_id', 'image_id', 'tweet_text', 'image', 'label',
                     'label_text', 'label_image', 'label_text_image', 'new_image_path']

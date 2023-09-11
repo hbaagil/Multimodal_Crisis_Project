@@ -49,7 +49,9 @@ def save_model(model: sklearn.linear_model._logistic.LogisticRegression = None) 
 
     # Save model locally
     if model is not None:
-        models_path = os.path.join(LOCAL_REGISTRY_PATH, "models", "model", timestamp + ".pickle")
+        cwd = os.getcwd()
+        models_path = os.path.join(cwd, LOCAL_REGISTRY_PATH, "model", timestamp + ".pickle")
+        print(models_path)
         with open(models_path, 'wb') as file:
             pickle.dump(model, file)
 
@@ -71,7 +73,7 @@ def save_vectorizer(vectorizer: sklearn.feature_extraction.text.TfidfVectorizer 
 
     # Save vectorizer locally
     if vectorizer is not None:
-        models_path = os.path.join(LOCAL_REGISTRY_PATH, "models", "vectorizer", timestamp + ".pickle")
+        models_path = os.path.join(LOCAL_REGISTRY_PATH, "vectorizer", timestamp + ".pickle")
         with open(models_path, 'wb') as file:
             pickle.dump(vectorizer, file)
 
@@ -95,7 +97,7 @@ def load_model() -> sklearn.linear_model._logistic.LogisticRegression:
     print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
 
     # Get the latest model version name by the timestamp on disk
-    local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models", "model")
+    local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "model")
     local_model_files = glob.glob(f"{local_model_directory}/*.pickle")
 
     if not local_model_files:
@@ -128,7 +130,7 @@ def load_vectorizer() -> sklearn.feature_extraction.text.TfidfVectorizer:
     print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
 
     # Get the latest model version name by the timestamp on disk
-    local_vectorizer_directory = os.path.join(LOCAL_REGISTRY_PATH, "models", "vectorizer")
+    local_vectorizer_directory = os.path.join(LOCAL_REGISTRY_PATH, "vectorizer")
     local_vectorizer_files = glob.glob(f"{local_vectorizer_directory}/*.pickle")
 
     if not local_vectorizer_files:

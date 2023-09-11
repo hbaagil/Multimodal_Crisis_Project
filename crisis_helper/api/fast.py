@@ -23,7 +23,7 @@ app.add_middleware(
 def predict(twit: str):
     """
     Make a single course prediction.
-    Assumes `twit` is provided as a string by the user
+    Assumes `tweet` is provided as a string by the user
     """
 
     X_pred = pd.DataFrame([twit], columns=["tweet_text"])
@@ -42,7 +42,7 @@ def predict(twit: str):
     # Predict
     y_pred = predict_binary_logistic_regression(model, X_pred_vec)
 
-    return {'twit_class': y_pred}
+    return {'tweet_class': y_pred}
 
 
 @app.get("/")
