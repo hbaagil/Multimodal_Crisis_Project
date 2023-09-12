@@ -5,7 +5,6 @@ import numpy as np
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
-#from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def text_cleaning(X: pd.DataFrame):
@@ -38,15 +37,24 @@ def text_cleaning(X: pd.DataFrame):
 
     return cleaned_sentence
 
-'''
-def tfidf_vectorizer():
-    """
+
+"""def tfidf_vectorizer():
+
     Instantiate TF-IDF vectorizer.
-    """
+
 
     # Instantiate a TF-IDF vectorizer
     vectorizer = TfidfVectorizer()
 
     print("✅ feature text with TF-IDF vectorized")
     return vectorizer
-'''
+
+def tfidf_vectorizer_fit(df, vectorizer):
+    fit_feature = vectorizer.fit(df)
+
+    return fit_feature
+
+def tfidf_vectorizer_transform(df, vectorizer):
+    fit_feature = vectorizer.fit(df)
+
+    return fit_feature"""

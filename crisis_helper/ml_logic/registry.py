@@ -58,6 +58,29 @@ def save_model(model: sklearn.linear_model._logistic.LogisticRegression = None) 
         print("✅ Model saved locally")
         return None
 
+def save_model_multiclass(model: sklearn.linear_model._logistic.LogisticRegression = None) -> None:
+
+    """
+    Saves model locally in a pickle file
+    """
+
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+
+    # Save model locally
+    #model_path = os.path.join(LOCAL_REGISTRY_PATH, "models", f"{timestamp}.h5")
+    #model.save(model_path)
+
+    # Save model locally
+    if model is not None:
+        cwd = os.getcwd()
+        models_path = os.path.join(cwd, LOCAL_REGISTRY_PATH, "model_multi", timestamp + ".pickle")
+        print(models_path)
+        with open(models_path, 'wb') as file:
+            pickle.dump(model, file)
+
+        print("✅ Model saved locally")
+        return None
+
 
 def save_vectorizer(vectorizer: sklearn.feature_extraction.text.TfidfVectorizer = None) -> None:
 
@@ -98,6 +121,39 @@ def load_model() -> sklearn.linear_model._logistic.LogisticRegression:
 
     # Get the latest model version name by the timestamp on disk
     local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "model")
+    local_model_files = glob.glob(f"{local_model_directory}/*.pickle")
+
+    if not local_model_files:
+        return None
+
+    most_recent_model_file_on_disk = sorted(local_model_files)[-1]
+
+    # Open saved model
+    with open(most_recent_model_file_on_disk ,'rb') as f:
+        latest_model = pickle.load(f)
+
+    print("✅ Model loaded from local disk")
+
+    return latest_model
+
+
+def load_model_multiclass() -> sklearn.linear_model._logistic.LogisticRegression:
+    #load_model(stage="Production") -> sklearn.linear_model._logistic.LogisticRegression:
+    """
+    Return a saved model:
+    - locally (latest one in alphabetical order)
+    - or from GCS (most recent one) if MODEL_TARGET=='gcs'  --> for unit 02 only
+    - or from MLFLOW (by "stage") if MODEL_TARGET=='mlflow' --> for unit 03 only
+
+    Return None (but do not Raise) if no model is found
+
+    """
+
+    #if MODEL_TARGET == "local":
+    print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
+
+    # Get the latest model version name by the timestamp on disk
+    local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "model_multi")
     local_model_files = glob.glob(f"{local_model_directory}/*.pickle")
 
     if not local_model_files:
