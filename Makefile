@@ -20,7 +20,7 @@ run_pred_multi:
 #run_evaluate:
 #	python -c 'from crisis_helper.interface.main import evaluate; evaluate()'
 
-run_all: preprocess_train_validate run_pred_multi
+run_all: preprocess_train_validate run_pred_bin run_pred_multi
 
 # run_workflow:
 # 	PREFECT__LOGGING__LEVEL=${PREFECT_LOG_LEVEL} python -m crisis_helper.interface.workflow
