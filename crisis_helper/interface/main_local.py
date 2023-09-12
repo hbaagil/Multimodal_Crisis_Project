@@ -92,7 +92,6 @@ def preprocess_train_validate() -> None:
     label_encoder_bin = label_encoder_bin.fit(df_train['label_text'])
     label_encoder_multi = label_encoder_multi.fit(df_train_multi['label_text'])
 
-    # Assuming you've already fitted label_encoder_multi as mentioned
     # Get the mapping of labels to encoded values
     label_mapping_multi = dict(zip(label_encoder_multi.classes_, label_encoder_multi.transform(label_encoder_multi.classes_)))
 
@@ -100,8 +99,6 @@ def preprocess_train_validate() -> None:
     print("Label Mapping (Multiclass):")
     for label, encoded_value in label_mapping_multi.items():
         print(f"{label}: {encoded_value}")
-
-
 
     # Transform the train and test sets using the same label encoder
     df_train['encoded_label'] = label_encoder_bin.transform(df_train['label_text'])
@@ -112,15 +109,21 @@ def preprocess_train_validate() -> None:
     # Preprocessing the column tweet_text using preprocess.py
     df_train['clean_texts'] = df_train.tweet_text.apply(text_cleaning)
     df_val['clean_texts'] = df_val.tweet_text.apply(text_cleaning)
+    df_train_multi['clean_texts'] = df_train_multi.tweet_text.apply(text_cleaning)
+    df_val_multi['clean_texts'] = df_val_multi.tweet_text.apply(text_cleaning)
 
 
     # Define X and y
     X_train_unvec = df_train['clean_texts']
     y_train = df_train['encoded_label']
+
+    X_train_multi_unvec = df_train_multi['clean_texts']
     y_train_multi = df_train_multi['encoded_label']
 
     X_val_unvec = df_val['clean_texts']
     y_val = df_val['encoded_label']
+
+    X_val_multi_unvec = df_val_multi['clean_texts']
     y_val_multi = df_val_multi['encoded_label']
 
     # Instantiate a TF-IDF vectorizer
@@ -132,15 +135,18 @@ def preprocess_train_validate() -> None:
     X_train = vectorizer.transform(X_train_unvec)
     X_val = vectorizer.transform(X_val_unvec)
 
+    X_train_multi = vectorizer.transform(X_train_multi_unvec)
+    X_val_multi = vectorizer.transform(X_val_multi_unvec)
+
     # Train a model on the training set, using `model_binary.py` for binary classification
     model = train_logistic_regression(X_train, y_train)
 
     # Train a model on the training set, using `model_multiclass.py` for multiclass classification
-    model_multi = train_logistic_regression_multi(X_train, y_train_multi)
+    model_multi = train_logistic_regression_multi(X_train_multi, y_train_multi)
 
     # Predict on the validation set
     y_pred_val_logreg = model.predict(X_val)
-    y_pred_val_logreg_multi = model_multi.predict(X_val)
+    y_pred_val_logreg_multi = model_multi.predict(X_val_multi)
 
     # Evaluate the LogReg classifier on validation dataset
     accuracy_val_logreg = accuracy_score(y_val, y_pred_val_logreg)
@@ -154,18 +160,8 @@ def preprocess_train_validate() -> None:
     save_vectorizer(vectorizer)
     save_model(model=model)
     save_model_multiclass(model=model_multi)
-    save_encoder(label_encoder_multi)
 
-    print("✅ Model,vectorizer, encoder and results saved")
-
-    # Add debugging statements to examine intermediate results
-    print("Class distribution in training labels:", df_train_multi['encoded_label'].value_counts())
-    print("Class distribution in validation labels:", df_val_multi['encoded_label'].value_counts())
-    print("Predictions:", y_pred_val_logreg_multi)
-    print("True labels:", y_val_multi)
-    print("Model Parameters:", model_multi.get_params())
-    print("Shape of X_train:", X_train.shape)
-    print("Shape of X_val:", X_val.shape)
+    print("✅ Model,vectorizer, and results saved")
 
 
 def pred_bin(X_pred: pd.DataFrame = None) -> np.ndarray:
@@ -229,12 +225,8 @@ def pred_multiclass(X_pred: pd.DataFrame = None) -> np.ndarray:
 if __name__ == '__main__':
     try:
         preprocess_train_validate()
-        binary_preds = pred_bin()  # Capture the binary predictions
-        multiclass_preds = pred_multiclass()  # Capture the multiclass predictions
-
-        # Print the predictions
-        print("Binary Predictions:", binary_preds)
-        print("Multiclass Predictions:", multiclass_preds)
+        pred_bin()
+        pred_multiclass()
 
     except:
         import sys
