@@ -21,9 +21,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-
 @app.get("/predict_binary")
 def predict_binary(tweet: str):
+
     """
     Make a single course prediction.
     Assumes `tweet` is provided as a string by the user

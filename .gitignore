@@ -30,6 +30,7 @@ data/
 models/
 *.joblib
 *.h5
+pickle_files/
 
 # Any pickle files
 *.pickle
