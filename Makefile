@@ -10,13 +10,17 @@ preprocess_train_validate:
 #run_train:
 #	python -c 'from crisis_helper.interface.main import train; train()'
 
-run_pred:
-	python -c 'from crisis_helper.interface.main_local import pred; pred()'
+run_pred_bin:
+	python -c 'from crisis_helper.interface.main_local import pred_bin; pred_bin()'
+
+run_pred_multi:
+	python -c 'from crisis_helper.interface.main_local import pred_multiclass; pred_multiclass()'
+
 
 #run_evaluate:
 #	python -c 'from crisis_helper.interface.main import evaluate; evaluate()'
 
-run_all: preprocess_train_validate run_pred
+run_all: preprocess_train_validate run_pred_multi
 
 # run_workflow:
 # 	PREFECT__LOGGING__LEVEL=${PREFECT_LOG_LEVEL} python -m crisis_helper.interface.workflow

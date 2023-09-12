@@ -16,6 +16,7 @@ google-cloud-bigquery
 google-cloud-storage
 db-dtypes
 pyarrow
+nltk
 mlflow==2.1.1
 python-dotenv
 prefect==2.8.1
@@ -25,12 +26,3 @@ pytz
 uvicorn
 httpx
 pytest-asyncio
-
-[:sys_platform != "darwin"]
-tensorflow==2.10.0
-
-[:sys_platform == "darwin" and "ARM" in platform_version]
-tensorflow-macos==2.10.0
-
-[:sys_platform == "darwin" and "ARM" not in platform_version]
-tensorflow==2.10.0
