@@ -9,6 +9,7 @@ COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+RUN python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet')"
 
 # Then only, install crisis_helper!
 
@@ -16,7 +17,6 @@ COPY crisis_helper crisis_helper
 COPY setup.py setup.py
 
 RUN pip install .
-RUN python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet')"
 
 COPY pickle_files pickle_files
 
