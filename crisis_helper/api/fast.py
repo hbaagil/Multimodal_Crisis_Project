@@ -14,7 +14,10 @@ import cv2
 
 
 app = FastAPI()
-app.state.model = load_model()
+app.state.vectorizer = load_vectorizer()
+app.state.binary_model = load_model()
+app.state.multiclass_model = load_model_multiclass()
+app.state.img_model = load_img_model()
 
 # Allowing all middleware is optional, but good practice for dev purposes
 app.add_middleware(
@@ -35,19 +38,16 @@ def predict_binary(tweet: str):
 
     X_pred = pd.DataFrame([tweet], columns=["tweet_text"])
 
-    # Load vectorizer and model
-    vectorizer = load_vectorizer()
-    model = load_model()
-
     # Clean tweets
     X_pred['clean_texts'] = X_pred.tweet_text.apply(text_cleaning)
     X_pred_unvec = X_pred['clean_texts']
 
     # Vectorize tweets
-    X_pred_vec = vectorizer.transform(X_pred_unvec)
+    X_pred_vec = app.state.vectorizer.transform(X_pred_unvec)
 
     # Predict
-    y_pred = predict_binary_logistic_regression(model, X_pred_vec)
+    y_pred = predict_binary_logistic_regression(app.state.binary_model,
+                                                X_pred_vec)
 
     return {'tweet_class': y_pred}
 
@@ -60,19 +60,16 @@ def predict_multiclass(tweet: str):
 
     X_pred = pd.DataFrame([tweet], columns=["tweet_text"])
 
-    # Load vectorizer and model
-    vectorizer = load_vectorizer()
-    model = load_model_multiclass()
-
     # Clean tweets
     X_pred['clean_texts'] = X_pred.tweet_text.apply(text_cleaning)
     X_pred_unvec = X_pred['clean_texts']
 
     # Vectorize tweets
-    X_pred_vec = vectorizer.transform(X_pred_unvec)
+    X_pred_vec = app.state.vectorizer.transform(X_pred_unvec)
 
     # Predict
-    y_pred = predict_multiclass_logistic_regression(model, X_pred_vec)
+    y_pred = predict_multiclass_logistic_regression(app.state.multiclass_model,
+                                                    X_pred_vec)
 
     return {'tweet_class': y_pred}
 
@@ -93,11 +90,8 @@ async def predict_img(img: UploadFile=File(...)):
     # Add an extra dimension for batch size
     reshaped_image = tf.expand_dims(resized_image, axis=0)
 
-    # Load model
-    EfficientNetV2L_model = load_img_model()
-
     # Classify
-    y_pred = EfficientNetV2L_model.predict(reshaped_image)
+    y_pred = app.state.img_model.predict(reshaped_image)
     y_pred = y_pred.argmax(axis=1)
 
      # Define the label mapping
