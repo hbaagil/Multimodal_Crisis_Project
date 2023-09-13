@@ -19,6 +19,7 @@ app.state.binary_model = load_model()
 app.state.multiclass_model = load_model_multiclass()
 app.state.img_model = load_img_model()
 
+
 # Allowing all middleware is optional, but good practice for dev purposes
 app.add_middleware(
     CORSMiddleware,
@@ -27,6 +28,12 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+
+@app.get("/")
+def root():
+    return {'greeting': 'Hello'}
+
 
 @app.get("/predict_binary")
 def predict_binary(tweet: str):
@@ -110,8 +117,3 @@ async def predict_img(img: UploadFile=File(...)):
     label = [label_mapping[prediction] for prediction in y_pred]
 
     return {'img_class': label}
-
-
-@app.get("/")
-def root():
-    return {'greeting': 'Hello'}
