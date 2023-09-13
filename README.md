@@ -1,6 +1,6 @@
 # Crisis helper - Multimodal Classification for Disaster-Related Content
 
-Collaborators: [Hamzah](https://github.com/hbaagil), [Ali](https://github.com/AnalyticAli), [Derya](https://github.com/deryagungor), [Ferran](https://github.com/greenlima)
+Collaborators: [Hamzah Baagil](https://github.com/hbaagil), [Ali A](https://github.com/AnalyticAli), [Derya Güngör](https://github.com/deryagungor), [Ferran Galán](https://github.com/greenlima)
 
 ## Overview:
 
