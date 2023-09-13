@@ -5,10 +5,10 @@ import pickle
 import sklearn
 
 from colorama import Fore, Style
-#from tensorflow import keras
 from sklearn.linear_model import LogisticRegression
 #from google.cloud import storage
 from crisis_helper.params import *
+from tensorflow import keras
 
 
 def save_results(params: dict=None, metrics: dict=None) -> None:
@@ -50,7 +50,7 @@ def save_model(model: sklearn.linear_model._logistic.LogisticRegression = None) 
     # Save model locally
     if model is not None:
         cwd = os.getcwd()
-        models_path = os.path.join(cwd, LOCAL_REGISTRY_PATH, "model", timestamp + ".pickle")
+        models_path = os.path.join(cwd, LOCAL_REGISTRY_PATH, "text_model", timestamp + ".pickle")
         print(models_path)
         with open(models_path, 'wb') as file:
             pickle.dump(model, file)
@@ -73,7 +73,7 @@ def save_model_multiclass(model: sklearn.linear_model._logistic.LogisticRegressi
     # Save model locally
     if model is not None:
         cwd = os.getcwd()
-        models_path = os.path.join(cwd, LOCAL_REGISTRY_PATH, "model_multi", timestamp + ".pickle")
+        models_path = os.path.join(cwd, LOCAL_REGISTRY_PATH, "text_model_multi", timestamp + ".pickle")
         print(models_path)
         with open(models_path, 'wb') as file:
             pickle.dump(model, file)
@@ -120,7 +120,7 @@ def load_model() -> sklearn.linear_model._logistic.LogisticRegression:
     print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
 
     # Get the latest model version name by the timestamp on disk
-    local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "model")
+    local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "text_model")
     local_model_files = glob.glob(f"{local_model_directory}/*.pickle")
 
     if not local_model_files:
@@ -153,7 +153,7 @@ def load_model_multiclass() -> sklearn.linear_model._logistic.LogisticRegression
     print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
 
     # Get the latest model version name by the timestamp on disk
-    local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "model_multi")
+    local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "text_model_multi")
     local_model_files = glob.glob(f"{local_model_directory}/*.pickle")
 
     if not local_model_files:
@@ -201,3 +201,35 @@ def load_vectorizer() -> sklearn.feature_extraction.text.TfidfVectorizer:
     print("✅ Vectorizer loaded from local disk")
 
     return latest_vectorizer
+
+
+def load_img_model():
+
+    #if MODEL_TARGET == "local":
+    print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
+
+    # Get the latest model version name by the timestamp on disk
+    local_img_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "img_model")
+    local_img_model_files = glob.glob(f"{local_img_model_directory}/model_name.h5")
+
+    if not local_img_model_files:
+        return None
+
+    most_recent_img_model_file_on_disk = sorted(local_img_model_files)[-1]
+    latest_img_model = keras.models.load_model(most_recent_img_model_file_on_disk,
+                                               compile=False)
+
+    # Compile the model with the desired optimizer and settings
+    latest_img_model.compile(optimizer='adam',
+                             loss='sparse_categorical_crossentropy',
+                             metrics=['accuracy'])
+
+
+   # Open saved img_model
+    #with open(most_recent_img_model_file_on_disk,'rb') as f:
+        #latest_img_model = pickle.load(f)
+
+
+    print("✅ Image model loaded from local disk")
+
+    return latest_img_model

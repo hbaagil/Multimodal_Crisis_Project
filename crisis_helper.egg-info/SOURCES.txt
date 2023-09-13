@@ -1,9 +1,0 @@
-LICENSE
-README.md
-setup.py
-crisis_helper.egg-info/PKG-INFO
-crisis_helper.egg-info/SOURCES.txt
-crisis_helper.egg-info/dependency_links.txt
-crisis_helper.egg-info/not-zip-safe
-crisis_helper.egg-info/requires.txt
-crisis_helper.egg-info/top_level.txt

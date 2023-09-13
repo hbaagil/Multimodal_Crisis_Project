@@ -10,7 +10,7 @@ BQ_DATASET = "taxifare"
 BQ_REGION = "EU"
 MODEL_TARGET = "local"'''
 ##################  CONSTANTS  #####################
-LOCAL_DATA_PATH = os.path.join(os.path.expanduser('/media/hamzah/Ubud/code/00_Data_Science'), ".crisis_helper", "mlops", "data")
+LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), ".crisis_helper", "mlops", "data")
 LOCAL_REGISTRY_PATH =  "pickle_files"
 
 COLUMN_NAMES_RAW = ['event_name', 'tweet_id', 'image_id', 'tweet_text', 'image', 'label',

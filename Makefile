@@ -5,16 +5,16 @@ reinstall_package:
 	@pip install -e .
 
 preprocess_train_validate:
-	python -c 'from crisis_helper.interface.main_local import preprocess_train_validate; preprocess_train_validate()'
+	python -c 'from crisis_helper.interface.main import preprocess_train_validate; preprocess_train_validate()'
 
 #run_train:
 #	python -c 'from crisis_helper.interface.main import train; train()'
 
 run_pred_bin:
-	python -c 'from crisis_helper.interface.main_local import pred_bin; pred_bin()'
+	python -c 'from crisis_helper.interface.main import pred_bin; pred_bin()'
 
 run_pred_multi:
-	python -c 'from crisis_helper.interface.main_local import pred_multiclass; pred_multiclass()'
+	python -c 'from crisis_helper.interface.main import pred_multiclass; pred_multiclass()'
 
 
 #run_evaluate:
@@ -73,39 +73,39 @@ docker_run_local_interactively:
 docker_build:
 	docker build \
         --platform linux/amd64 \
-        -t $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod .
+        -t $(GCR_REGION)/$(GCP_PROJECT)/$(GCR_IMAGE):prod .
 
 # Alternative if previous doesn´t work. Needs additional setup.
 # Probably don´t need this. Used to build arm on linux amd64
 docker_build_alternative:
 	docker buildx build --load \
         --platform linux/amd64 \
-        -t $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod .
+        -t $(GCR_REGION)/$(GCP_PROJECT)/$(GCR_IMAGE):prod .
 
 docker_run:
 	docker run \
         --platform linux/amd64 \
         -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
         --env-file .env \
-        $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod
+        $(GCR_REGION)/$(GCP_PROJECT)/$(GCR_IMAGE):prod
 
 docker_run_interactively:
 	docker run -it \
         --platform linux/amd64 \
         -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
         --env-file .env \
-        $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod \
+        $(GCR_REGION)/$(GCP_PROJECT)/$(GCR_IMAGE):prod \
         bash
 
 # Push and deploy to cloud
 
 docker_push:
-	docker push $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod
+	docker push $(GCR_REGION)/$(GCP_PROJECT)/$(GCR_IMAGE):prod
 
 docker_deploy:
 	gcloud run deploy \
-        --project $(PROJECT_ID) \
-        --image $(GCR_MULTI_REGION)/$(PROJECT_ID)/$(DOCKER_IMAGE_NAME):prod \
+        --project $(GCP_PROJECT) \
+        --image $(GCR_REGION)/$(GCP_PROJECT)/$(GCR_IMAGE):prod \
         --platform managed \
         --region europe-west1 \
         --env-vars-file .env.yaml

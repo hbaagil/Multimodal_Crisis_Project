@@ -6,13 +6,13 @@ with open("requirements.txt") as f:
 requirements = [x.strip() for x in content if "git+" not in x]
 
 setup(name='crisis_helper',
-      version="0.0.2",
+      version="0.0.3",
       description="crisis_helper (binary_api_pred)",
       license="MIT",
       author="Le Wagon",
       author_email="contact@lewagon.org",
       #url="https://github.com/hbaagil/00_Multimodal_Crisis_Project",
-      install_requires=requirements,
+      #install_requires=requirements,
       packages=find_packages(),
       test_suite="tests",
       # include_package_data: to install data from MANIFEST.in
