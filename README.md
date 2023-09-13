@@ -1,10 +1,10 @@
 # Crisis helper - Multimodal Classification for Disaster-Related Content
 
-The CrisisMMD Dataset: <a href=“https://crisisnlp.qcri.org/crisismmd”>CrisisMMD Dataset</a>
+The CrisisMMD Dataset: [CrisisMMD Dataset](https://crisisnlp.qcri.org/crisismmd)
 
-Restructured Kaggle Dataset: <a href=“https://www.kaggle.com/datasets/greencarrot/restructured-multimodal-crisis-project”>Restructured MM Crisis Dataset</a>
+Restructured Kaggle Dataset: [Restructured MM Crisis Dataset](https://www.kaggle.com/datasets/greencarrot/restructured-multimodal-crisis-project)
 
-Collaborators: <a href="https://github.com/hbaagil">Hamzah</a>, <a href="https://github.com/AnalyticAli">Ali</a>, <a href="https://github.com/deryagungor">Derya</a>, <a href=“https://github.com/greenlima”>Ferran</a>
+Collaborators: [Hamzah](https://github.com/hbaagil), [Ali](https://github.com/AnalyticAli), [Derya](https://github.com/deryagungor), [Ferran](https://github.com/greenlima)
 
 
 
