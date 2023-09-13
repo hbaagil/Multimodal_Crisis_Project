@@ -18,7 +18,6 @@ The CrisisMMD dataset serves as the foundation of our project, encompassing a di
 5. [Evaluation](#evaluation)
 6. [Deployment](#deployment)
 7. [Monitoring and Updates](#monitoring-and-updates)
-8. [Contributors](#contributors)
 
 ...
 
