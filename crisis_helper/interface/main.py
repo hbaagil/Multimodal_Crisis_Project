@@ -14,6 +14,10 @@ from crisis_helper.params import *
 from sklearn.metrics import accuracy_score
 from crisis_helper.ml_logic.registry import *
 
+from starlette.responses import Response
+import cv2
+import io
+
 
 def preprocess_train_validate() -> None:
     """
@@ -219,7 +223,6 @@ def pred_multiclass(X_pred: pd.DataFrame = None) -> np.ndarray:
 
     print(f"Tweet considered to be: {y_pred}")
     return y_pred
-
 
 
 if __name__ == '__main__':

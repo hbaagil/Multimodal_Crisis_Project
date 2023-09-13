@@ -5,16 +5,16 @@ reinstall_package:
 	@pip install -e .
 
 preprocess_train_validate:
-	python -c 'from crisis_helper.interface.main_local import preprocess_train_validate; preprocess_train_validate()'
+	python -c 'from crisis_helper.interface.main import preprocess_train_validate; preprocess_train_validate()'
 
 #run_train:
 #	python -c 'from crisis_helper.interface.main import train; train()'
 
 run_pred_bin:
-	python -c 'from crisis_helper.interface.main_local import pred_bin; pred_bin()'
+	python -c 'from crisis_helper.interface.main import pred_bin; pred_bin()'
 
 run_pred_multi:
-	python -c 'from crisis_helper.interface.main_local import pred_multiclass; pred_multiclass()'
+	python -c 'from crisis_helper.interface.main import pred_multiclass; pred_multiclass()'
 
 
 #run_evaluate:
